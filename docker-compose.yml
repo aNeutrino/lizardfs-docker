@@ -1,0 +1,125 @@
+#
+# This is EXPERIMENTAL version of docker-compose.yml and may not work for you.
+#
+version: '3'
+services:
+  ###########################
+  # Master
+  ###########################
+  lizardfs-master:
+    #image: lizardfs/master  # use GitHub version
+    build: ./lizardfs-master  # use local version
+    container_name: "lizardfs-master"
+    networks:
+      lizardfs-net:
+        ipv4_address: "172.20.0.2"
+    #ports:
+    #  - "9425:9425"
+
+  ###########################
+  # Shadow
+  ###########################
+  lizardfs-shadow:  # not present in MFS version
+    #image: lizardfs/shadow  # use GitHub version
+    build: ./lizardfs-shadow  # use local version
+    container_name: "lizardfs-shadow"
+    links:
+      - lizardfs-master
+    networks:
+      lizardfs-net:
+        ipv4_address: "172.20.0.3"
+
+  ###########################
+  # Client
+  ###########################
+  lizardfs-client:
+    #image: lizardfs/client  # use GitHub version
+    build: ./lizardfs-client  # use local version
+    container_name: "lizardfs-client"
+    privileged: true  # not present in MFS version
+    #cap_add:
+    #  - SYS_ADMIN
+    #devices:
+    #  - /dev/fuse:/dev/fuse
+    #security_opt:
+    #  - apparmor:unconfined
+    stdin_open: true
+    tty: true
+    links:
+      - lizardfs-master
+    networks:
+      lizardfs-net:
+        ipv4_address: "172.20.0.5"
+    #depends_on:
+    #  - mfsmaster
+
+  ###########################
+  # Chunkserver #1
+  ###########################
+  lizardfs-chunkserver-01:
+    #image: lizardfs/chunkserver  # use GitHub version
+    build: ./lizardfs-chunkserver  # use local version
+    container_name: "lizardfs-chunkserver-01"
+    #environment:
+    #  - LABELS=M
+    #  - SIZE=10
+    links:
+      - lizardfs-master
+    networks:
+      lizardfs-net:
+        ipv4_address: "172.20.0.11"
+    #volumes:
+    #  - ./data/cs1_hdd0:/mnt/hdd0
+    #depends_on:
+    #  - mfsmaster
+
+  ###########################
+  # Chunkserver #2
+  ###########################
+  lizardfs-chunkserver-02:
+    #image: lizardfs/chunkserver  # use GitHub version
+    build: ./lizardfs-chunkserver  # use local version
+    container_name: "lizardfs-chunkserver-02"
+    #environment:
+    #  - LABELS=MB
+    #  - SIZE=10
+    links:
+      - lizardfs-master
+    networks:
+      lizardfs-net:
+        ipv4_address: "172.20.0.12"
+    #volumes:
+    #        - ./data/cs2_hdd0:/mnt/hdd0
+    #depends_on:
+    #  - mfsmaster
+
+  ###########################
+  # Chunkserver #3
+  ###########################
+  lizardfs-chunkserver-03:
+    #image: lizardfs/chunkserver  # use GitHub version
+    build: ./lizardfs-chunkserver  # use local version
+    container_name: "lizardfs-chunkserver-03"
+    #environment:
+    #  - LABELS=MB
+    #  - SIZE=10
+    links:
+      - lizardfs-master
+    networks:
+      lizardfs-net:
+        ipv4_address: "172.20.0.13"
+    #volumes:
+    #        - ./data/cs3_hdd0:/mnt/hdd0
+    #depends_on:
+    #  - mfsmaster
+
+###########################
+# Network config
+###########################
+networks:
+  lizardfs-net:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 172.20.0.0/16
+         #gateway: 172.20.0.1
