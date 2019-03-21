@@ -1,15 +1,11 @@
-# This is experimental/unstable Dockerfile
-#
-# TODO
-#  - replace copy-paste with something sane
-#  - add support for both Debian and Ubuntu
-
-FROM ubuntu:19.04
+ARG code_version=19.04
+FROM ubuntu:${code_version}
+LABEL maintainer="patryk.beza@lizardfs.com"
 
 # Install dependencies
 
-ENV DEBIAN_FRONTEND noninteractive
-RUN apt-get update && apt-get install -y wget apt-utils net-tools openssh-server
+RUN rm /etc/dpkg/dpkg.cfg.d/excludes
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y iputils-ping wget vim apt-utils net-tools openssh-server
 
 # Add repository
 #
@@ -27,7 +23,7 @@ RUN apt-get update && apt-get install -y lizardfs-client
 
 RUN mkdir -p /var/run/sshd
 RUN echo "root:mypasswd" | chpasswd
-RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+RUN sed -i 's/#\{0,\}PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
 
 # Pass ENV variables to Dockerized SSHD service
