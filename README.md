@@ -92,6 +92,7 @@ This will remove all images without at least one container associated to them.
 
 - Remove SSH server ([rationale][14])
 - Remove copy-paste configuration
+- [15][Make] `lizardfs-client` wait for `lizardfs-master` successful start
 
 ---
 
@@ -111,3 +112,4 @@ This will remove all images without at least one container associated to them.
 [12]: https://github.com/moosefs
 [13]: https://github.com/moosefs/moosefs-docker-cluster/
 [14]: https://jpetazzo.github.io/2014/06/23/docker-ssh-considered-evil/
+[15]: https://stackoverflow.com/questions/31746182/docker-compose-wait-for-container-x-before-starting-y
