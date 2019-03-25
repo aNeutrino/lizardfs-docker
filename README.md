@@ -92,7 +92,7 @@ This will remove all images without at least one container associated to them.
 
 - Remove SSH server ([rationale][14])
 - Remove copy-paste configuration
-- [15][Make] `lizardfs-client` wait for `lizardfs-master` successful start
+- [Make][15] `lizardfs-client` wait for `lizardfs-master` successful start
 
 ---
 
