@@ -45,10 +45,6 @@ RUN zcat "${etc_config_dir}/mfschunkserver.cfg" > "${etc_config_dir}/mfschunkser
 # Appending to gzipped config? Why? TODO FIXME
 #RUN echo "MASTER_HOST=lizardfs-master" >> "${etc_config_dir}/mfschunkserver.cfg"
 
-# Define mfsmaster in /etc/hosts
-
-RUN echo "172.20.0.2 mfsmaster" >> /etc/hosts
-
 # Setup mfshdd.cfg
 
 RUN mkdir -p /mnt/sdb1

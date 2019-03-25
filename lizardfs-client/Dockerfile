@@ -11,10 +11,6 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y iputils-
 #
 #RUN echo "deb [trusted=yes] file:/home/patryk/Documents/lizardfs-all/lizardfs-repo-local/ /" > /etc/apt/sources.list.d/lizardfs.list 
 
-# Define mfsmaster in /etc/hosts
-#
-#RUN echo "172.20.0.2 mfsmaster" >> /etc/hosts
-
 # Install LizardFS client
 
 RUN apt-get update && apt-get install -y lizardfs-client
