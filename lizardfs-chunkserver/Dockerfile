@@ -41,7 +41,13 @@ EXPOSE 9419 9420 9422 22
 # Copy sample mfschunkserver.cfg.dist configuration file and customize it
 
 RUN cp "${example_config_dir}/mfschunkserver.cfg${example_chunkserver_config_ext}" "${etc_config_dir}/mfschunkserver.cfg"
-RUN echo "MASTER_HOST=lizardfs-master" >> "${etc_config_dir}/mfschunkserver.cfg"
+RUN zcat "${etc_config_dir}/mfschunkserver.cfg" > "${etc_config_dir}/mfschunkserver.cfg.unzipped"
+# Appending to gzipped config? Why? TODO FIXME
+#RUN echo "MASTER_HOST=lizardfs-master" >> "${etc_config_dir}/mfschunkserver.cfg"
+
+# Define mfsmaster in /etc/hosts
+
+RUN echo "172.20.0.2 mfsmaster" >> /etc/hosts
 
 # Setup mfshdd.cfg
 
@@ -61,11 +67,6 @@ RUN mkdir -p /var/run/sshd
 RUN sed -i 's/#\{0,\}PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
 
-# Pass ENV variables to Dockerized SSHD service
-#
-# See: https://stackoverflow.com/questions/36292317/why-set-visible-now-in-etc-profile
-
-ENV NOTVISIBLE "in users profile"
-RUN echo "export VISIBLE=now" >> /etc/profile
+# Start lizardfs-chunkserver service
 
 CMD service lizardfs-chunkserver start && /usr/sbin/sshd -D

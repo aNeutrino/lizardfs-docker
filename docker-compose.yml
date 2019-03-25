@@ -4,39 +4,53 @@ services:
   # Master
   ###########################
   lizardfs-master:
-    #image: lizardfs/master  # use GitHub version
-    build: ./lizardfs-master  # use local version
     container_name: "lizardfs-master"
     hostname: lizardfs-master
+    build: ./lizardfs-master
+    #image: lizardfs/master
     networks:
       lizardfs-net:
         ipv4_address: "172.20.0.2"
+    extra_hosts:
+      - "mfsmaster:127.0.0.1"
+    # Volumes needed for logging
+    # See: https://www.projectatomic.io/blog/2016/10/playing-with-docker-logging/
+    volumes:
+      - /dev/log:/dev/log
+    # TODO seems to work without it - why?
     #ports:
     #  - "9425:9425"
 
   ###########################
   # Shadow
   ###########################
-  lizardfs-shadow:  # not present in MFS version
-    #image: lizardfs/shadow  # use GitHub version
-    build: ./lizardfs-shadow  # use local version
+  lizardfs-shadow:
     container_name: "lizardfs-shadow"
     hostname: lizardfs-shadow
-    links:
+    build: ./lizardfs-shadow
+    #image: lizardfs/shadow
+    depends_on:
       - lizardfs-master
     networks:
       lizardfs-net:
         ipv4_address: "172.20.0.3"
+    extra_hosts:
+      - "mfsmaster:172.20.0.2"
+    volumes:
+      - /dev/log:/dev/log
 
   ###########################
   # Client
   ###########################
   lizardfs-client:
-    #image: lizardfs/client  # use GitHub version
-    build: ./lizardfs-client  # use local version
     container_name: "lizardfs-client"
     hostname: lizardfs-client
-    privileged: true  # not present in MFS version
+    build: ./lizardfs-client
+    #image: lizardfs/client
+    depends_on:
+      - lizardfs-master
+    # Give extended privileges to this container TODO needed?
+    privileged: true
     #cap_add:
     #  - SYS_ADMIN
     #devices:
@@ -45,76 +59,87 @@ services:
     #  - apparmor:unconfined
     stdin_open: true
     tty: true
-    links:
-      - lizardfs-master
     networks:
       lizardfs-net:
         ipv4_address: "172.20.0.5"
-    #depends_on:
-    #  - mfsmaster
+    extra_hosts:
+      - "mfsmaster:172.20.0.2"
+    volumes:
+      - /dev/log:/dev/log
 
   ###########################
   # Chunkserver #1
   ###########################
   lizardfs-chunkserver-01:
-    #image: lizardfs/chunkserver  # use GitHub version
-    build: ./lizardfs-chunkserver  # use local version
     container_name: "lizardfs-chunkserver-01"
     hostname: lizardfs-chunkserver-01
-    #environment:
-    #  - LABELS=M
-    #  - SIZE=10
-    links:
+    build: ./lizardfs-chunkserver
+    #image: lizardfs/chunkserver
+    depends_on:
       - lizardfs-master
+    # Uncomment to be privileged to run e.g. strace or ltrace
+    # See: https://github.com/moby/moby/issues/21051#issuecomment-325036902
+    #cap_add:
+    #  - SYS_ADMIN
+    #  - SYS_PTRACE
+    #privileged: true
+    #security_opt:
+    #  - apparmor:unconfined
     networks:
       lizardfs-net:
         ipv4_address: "172.20.0.11"
-    #volumes:
-    #  - ./data/cs1_hdd0:/mnt/hdd0
-    #depends_on:
-    #  - mfsmaster
+    extra_hosts:
+      - "mfsmaster:172.20.0.2"
+    volumes:
+      - /dev/log:/dev/log
+    # - ./data/cs1_hdd0:/mnt/hdd0
+    #environment:
+    #  - LABELS=M
+    #  - SIZE=10
 
   ###########################
   # Chunkserver #2
   ###########################
   lizardfs-chunkserver-02:
-    #image: lizardfs/chunkserver  # use GitHub version
-    build: ./lizardfs-chunkserver  # use local version
     container_name: "lizardfs-chunkserver-02"
     hostname: lizardfs-chunkserver-02
-    #environment:
-    #  - LABELS=MB
-    #  - SIZE=10
-    links:
+    build: ./lizardfs-chunkserver
+    #image: lizardfs/chunkserver
+    depends_on:
       - lizardfs-master
     networks:
       lizardfs-net:
         ipv4_address: "172.20.0.12"
-    #volumes:
-    #        - ./data/cs2_hdd0:/mnt/hdd0
-    #depends_on:
-    #  - mfsmaster
+    extra_hosts:
+      - "mfsmaster:172.20.0.2"
+    volumes:
+      - /dev/log:/dev/log
+    # - ./data/cs2_hdd0:/mnt/hdd0
+    #environment:
+    #  - LABELS=MB
+    #  - SIZE=10
 
   ###########################
   # Chunkserver #3
   ###########################
   lizardfs-chunkserver-03:
-    #image: lizardfs/chunkserver  # use GitHub version
-    build: ./lizardfs-chunkserver  # use local version
     container_name: "lizardfs-chunkserver-03"
     hostname: lizardfs-chunkserver-03
-    #environment:
-    #  - LABELS=MB
-    #  - SIZE=10
-    links:
+    build: ./lizardfs-chunkserver
+    #image: lizardfs/chunkserver
+    depends_on:
       - lizardfs-master
     networks:
       lizardfs-net:
         ipv4_address: "172.20.0.13"
-    #volumes:
-    #        - ./data/cs3_hdd0:/mnt/hdd0
-    #depends_on:
-    #  - mfsmaster
+    extra_hosts:
+      - "mfsmaster:172.20.0.2"
+    volumes:
+      - /dev/log:/dev/log
+    # - ./data/cs3_hdd0:/mnt/hdd0
+    #environment:
+    #  - LABELS=MB
+    #  - SIZE=10
 
 ###########################
 # Network config
@@ -125,4 +150,3 @@ networks:
     ipam:
      config:
        - subnet: 172.20.0.0/16
-         #gateway: 172.20.0.1

@@ -57,11 +57,6 @@ RUN mkdir -p /var/run/sshd
 RUN sed -i 's/#\{0,\}PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
 
-# Pass ENV variables to Dockerized SSHD service
-#
-# See: https://stackoverflow.com/questions/36292317/why-set-visible-now-in-etc-profile
-
-ENV NOTVISIBLE "in users profile"
-RUN echo "export VISIBLE=now" >> /etc/profile
+# Start lizardfs-master and lizardfs-cgiserv
 
 CMD service lizardfs-cgiserv start && service lizardfs-master start && /usr/sbin/sshd -D
