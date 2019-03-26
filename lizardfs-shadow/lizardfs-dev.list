@@ -1,0 +1,3 @@
+# Local repository for LizardFS development
+
+deb [trusted=yes] file:/share/ /

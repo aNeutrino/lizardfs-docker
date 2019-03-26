@@ -1,3 +1,25 @@
+#
+# This is still experimental docker-compose configuration.
+# Rationale behind some of the options used:
+#
+# 1) 'stdin_open: true' and 'tty: true' together with `CMD bash` in Dockerfiles
+# are used to prevent container from early exit to be able to run `docker
+# attach <container-name>` instead of `docker exec -it <container-name> bash`.
+#
+# 2) Using '/dev/log' volume is useful for containers' logging on the host
+# machine.
+#
+# 3) Using '/share' volume is used to keep development .deb packages there.
+# They are installed from containers (see containers' APT configuration in
+# '/etc/apt/sources.list.d/*).
+#
+# 4) 'depends_on' is used to prevent running e.g. 'lizardfs-client' before
+# 'lizardfs-master' starts.
+#
+# 5) Some of the following options are needed to e.g. run strace/ltrace within
+# container: 'privileged', 'cap_add', 'security_opt' (particularly SYS_PTRACE).
+#
+
 version: '3'
 services:
   ###########################
@@ -8,6 +30,8 @@ services:
     hostname: lizardfs-master
     build: ./lizardfs-master
     #image: lizardfs/master
+    stdin_open: true
+    tty: true
     networks:
       lizardfs-net:
         ipv4_address: "172.20.0.2"
@@ -17,6 +41,7 @@ services:
     # See: https://www.projectatomic.io/blog/2016/10/playing-with-docker-logging/
     volumes:
       - /dev/log:/dev/log
+      - /share:/share
     # TODO seems to work without it - why?
     #ports:
     #  - "9425:9425"
@@ -29,6 +54,8 @@ services:
     hostname: lizardfs-shadow
     build: ./lizardfs-shadow
     #image: lizardfs/shadow
+    stdin_open: true
+    tty: true
     depends_on:
       - lizardfs-master
     networks:
@@ -38,6 +65,7 @@ services:
       - "mfsmaster:172.20.0.2"
     volumes:
       - /dev/log:/dev/log
+      - /share:/share
 
   ###########################
   # Client
@@ -47,6 +75,8 @@ services:
     hostname: lizardfs-client
     build: ./lizardfs-client
     #image: lizardfs/client
+    stdin_open: true
+    tty: true
     depends_on:
       - lizardfs-master
     # Give extended privileges to this container TODO needed?
@@ -57,8 +87,6 @@ services:
     #  - /dev/fuse:/dev/fuse
     #security_opt:
     #  - apparmor:unconfined
-    stdin_open: true
-    tty: true
     networks:
       lizardfs-net:
         ipv4_address: "172.20.0.5"
@@ -66,6 +94,7 @@ services:
       - "mfsmaster:172.20.0.2"
     volumes:
       - /dev/log:/dev/log
+      - /share:/share
 
   ###########################
   # Chunkserver #1
@@ -75,6 +104,8 @@ services:
     hostname: lizardfs-chunkserver-01
     build: ./lizardfs-chunkserver
     #image: lizardfs/chunkserver
+    stdin_open: true
+    tty: true
     depends_on:
       - lizardfs-master
     # Uncomment to be privileged to run e.g. strace or ltrace
@@ -92,6 +123,7 @@ services:
       - "mfsmaster:172.20.0.2"
     volumes:
       - /dev/log:/dev/log
+      - /share:/share
     # - ./data/cs1_hdd0:/mnt/hdd0
     #environment:
     #  - LABELS=M
@@ -105,6 +137,8 @@ services:
     hostname: lizardfs-chunkserver-02
     build: ./lizardfs-chunkserver
     #image: lizardfs/chunkserver
+    stdin_open: true
+    tty: true
     depends_on:
       - lizardfs-master
     networks:
@@ -114,6 +148,7 @@ services:
       - "mfsmaster:172.20.0.2"
     volumes:
       - /dev/log:/dev/log
+      - /share:/share
     # - ./data/cs2_hdd0:/mnt/hdd0
     #environment:
     #  - LABELS=MB
@@ -127,6 +162,8 @@ services:
     hostname: lizardfs-chunkserver-03
     build: ./lizardfs-chunkserver
     #image: lizardfs/chunkserver
+    stdin_open: true
+    tty: true
     depends_on:
       - lizardfs-master
     networks:
@@ -136,6 +173,7 @@ services:
       - "mfsmaster:172.20.0.2"
     volumes:
       - /dev/log:/dev/log
+      - /share:/share
     # - ./data/cs3_hdd0:/mnt/hdd0
     #environment:
     #  - LABELS=MB

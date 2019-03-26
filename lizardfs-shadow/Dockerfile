@@ -2,61 +2,40 @@ ARG code_version=19.04
 FROM ubuntu:${code_version}
 LABEL maintainer="patryk.beza@lizardfs.com"
 
-# Variables for build from Ubuntu/Debian repo
-
-ARG example_ext=""
-ARG example_config_dir="/usr/share/doc/lizardfs-master/examples"
-ARG etc_config_dir="/etc/lizardfs"
-ARG var_lib_dir="/var/lib/lizardfs"
-
-# Variables for custom/manual build
+# Without below line sample LizardFS configuration is not installed
+# TODO temporarily not needed since LizardFS is installed by CMD (not RUN)
 #
-#ARG example_ext=".dist"
-#ARG example_config_dir="/etc/mfs"
-#ARG etc_config_dir="/etc/mfs"
-#ARG var_lib_dir="/var/lib/mfs"
+#RUN rm /etc/dpkg/dpkg.cfg.d/excludes
 
 # Install dependencies
 
-RUN rm /etc/dpkg/dpkg.cfg.d/excludes
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y iputils-ping wget vim apt-utils net-tools openssh-server
-
-# Add repository
-#
-#RUN echo "deb [trusted=yes] file:/home/patryk/Documents/lizardfs-all/lizardfs-repo-local/ /" > /etc/apt/sources.list.d/lizardfs.list
-
-# Install LizardFS master and CGI
-
-RUN apt-get update && apt-get install -y lizardfs-master lizardfs-cgi lizardfs-cgiserv
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y iputils-ping wget vim apt-utils net-tools
 
 # Expose ports without publishing them to the host machine - they’ll only be
 # accessible to linked services
 #
 # See: https://docs.docker.com/compose/compose-file/#expose
 
-EXPOSE 9420 9421 9422 9423 9424 9425 22
+EXPOSE 9420 9421 9422 9423 9424 9425
 
-# Copy empty metadata.mfs
+# Add root user with mypasswd
 
-RUN cp "${var_lib_dir}/metadata.mfs.empty" "${var_lib_dir}/metadata.mfs"
-
-# Copy sample configuration
-
-RUN cp "${example_config_dir}/mfsexports.cfg${example_ext}" "${etc_config_dir}/mfsexports.cfg"
-RUN cp "${example_config_dir}/mfsmaster.cfg${example_ext}" "${etc_config_dir}/mfsmaster.cfg"
-RUN echo "MASTER_HOST=lizardfs-master" >> "${etc_config_dir}/mfsmaster.cfg"
-RUN echo "PERSONALITY=shadow" >> "${etc_config_dir}/mfsmaster.cfg"
-
-#RUN sed -i "s/fals/tru/g" /etc/default/lizardfs-cgiserv
-#RUN sed -i "s/fals/tru/g" /etc/default/lizardfs-master
 RUN echo "root:mypasswd" | chpasswd
 
-# Allow password based login for root
+# Add local repo for development purposes; comment it out if you want to
+# install LizardFS from official repository
 
-RUN mkdir -p /var/run/sshd
-RUN sed -i 's/#\{0,\}PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
-RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
+COPY lizardfs-dev.list /etc/apt/sources.list.d
 
-# Start lizardfs-master and lizardfs-cgiserv
+# Install LizardFS master and CGI and start their services.
+#
+# Note that installing LizardFS is not done with RUN (container build time) but
+# CMD (container run time) because of .deb packages are located in host's local
+# repository which is on the /share volume. Volumes are not visible during
+# build time.
 
-CMD service lizardfs-cgiserv start && service lizardfs-master start && /usr/sbin/sshd -D
+COPY start.sh /home/start.sh
+RUN chown root:root /home/start.sh
+RUN chmod 700 /home/start.sh
+
+CMD ["/home/start.sh"]

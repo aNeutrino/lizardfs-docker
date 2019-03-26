@@ -2,33 +2,29 @@ ARG code_version=19.04
 FROM ubuntu:${code_version}
 LABEL maintainer="patryk.beza@lizardfs.com"
 
+# Without below line sample LizardFS configuration is not installed
+# TODO temporarily not needed since LizardFS is installed by CMD (not RUN)
+#
+#RUN rm /etc/dpkg/dpkg.cfg.d/excludes
+
 # Install dependencies
 
-RUN rm /etc/dpkg/dpkg.cfg.d/excludes
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y iputils-ping wget vim apt-utils net-tools openssh-server
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y iputils-ping wget vim apt-utils net-tools
 
-# Add repository
+# Add local repo for development purposes; comment it out if you want to
+# install LizardFS from official repository
+
+COPY lizardfs-dev.list /etc/apt/sources.list.d
+
+# Install LizardFS client.
 #
-#RUN echo "deb [trusted=yes] file:/home/patryk/Documents/lizardfs-all/lizardfs-repo-local/ /" > /etc/apt/sources.list.d/lizardfs.list 
+# Note that installing LizardFS is not done with RUN (container build time) but
+# CMD (container run time) because of .deb packages are located in host's local
+# repository which is on the /share volume. Volumes are not visible during
+# build time.
 
-# Install LizardFS client
+COPY start.sh /home/start.sh
+RUN chown root:root /home/start.sh
+RUN chmod 700 /home/start.sh
 
-RUN apt-get update && apt-get install -y lizardfs-client
-
-# Allow password based login for root
-
-RUN mkdir -p /var/run/sshd
-RUN echo "root:mypasswd" | chpasswd
-RUN sed -i 's/#\{0,\}PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
-RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
-
-# Expose ports without publishing them to the host machine - they’ll only be
-# accessible to linked services
-#
-# See: https://docs.docker.com/compose/compose-file/#expose
-
-EXPOSE 22
-
-# Mount /mnt/lizardfs
-
-CMD mkdir -p /mnt/lizardfs && mfsmount -H lizardfs-master -o cacheexpirationtime=5000 -o mfswritecachesize=32 /mnt/lizardfs && /usr/sbin/sshd -D
+CMD ["/home/start.sh"]
