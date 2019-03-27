@@ -94,6 +94,7 @@ This will remove all images without at least one container associated to them.
 - Remove copy-paste configuration
 - [Make][15] `lizardfs-client` wait for `lizardfs-master` successful start
 - [Add][16] option to make docker-compose build an image from a remote git repository
+- Wait for `lizarfds-master` start ([`depends_on`][17] is [not][18] sufficient)
 
 ---
 
@@ -115,3 +116,5 @@ This will remove all images without at least one container associated to them.
 [14]: https://jpetazzo.github.io/2014/06/23/docker-ssh-considered-evil/
 [15]: https://stackoverflow.com/questions/31746182/docker-compose-wait-for-container-x-before-starting-y
 [16]: https://stackoverflow.com/questions/34120504/how-can-i-make-docker-compose-build-an-image-from-a-remote-git-repository
+[17]: https://docs.docker.com/compose/compose-file/#depends_on
+[18]: https://stackoverflow.com/questions/31746182/docker-compose-wait-for-container-x-before-starting-y
