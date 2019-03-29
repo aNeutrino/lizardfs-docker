@@ -90,11 +90,10 @@ This will remove all images without at least one container associated to them.
 
 ## TODO
 
-- Remove SSH server ([rationale][14])
+- <s>Remove SSH server ([rationale][14])</s>
 - Remove copy-paste configuration ([solution][21]?)
-- [Make][15] `lizardfs-client` wait for `lizardfs-master` successful start
+- [Make][15] `lizardfs-client` wait for `lizardfs-master` successful start – wait for `lizarfds-master` start ([`depends_on`][17] is [not][18] sufficient)
 - [Add][16] option to make docker-compose build an image from a remote git repository
-- Wait for `lizarfds-master` start ([`depends_on`][17] is [not][18] sufficient)
 - Make explicit [preference][20] of local apt repo for LizardFS (see: [`apt_preferences`][19])
 
 ---
