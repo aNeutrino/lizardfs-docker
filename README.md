@@ -82,6 +82,14 @@ To remove all unused images, not just dangling ones, run:
 
 This will remove all images without at least one container associated to them.
 
+To delete all containers run:
+
+    docker rm $(docker ps -a -q)
+    
+To delete all images run:
+
+    docker rmi $(docker images -q)
+
 ### Get bash into a running container
 
     docker exec -i -t container-name /bin/bash
