@@ -3,9 +3,8 @@ FROM ubuntu:${code_version}
 LABEL maintainer="patryk.beza@lizardfs.com"
 
 # Without below line sample LizardFS configuration is not installed
-# TODO temporarily not needed since LizardFS is installed by CMD (not RUN)
-#
-#RUN rm /etc/dpkg/dpkg.cfg.d/excludes
+
+RUN rm /etc/dpkg/dpkg.cfg.d/excludes
 
 # Install dependencies
 
