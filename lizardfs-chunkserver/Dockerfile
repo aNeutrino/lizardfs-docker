@@ -25,6 +25,7 @@ RUN echo "root:mypasswd" | chpasswd
 # install LizardFS from official repository
 
 COPY lizardfs-dev.list /etc/apt/sources.list.d
+COPY prefer_local_lizardfs_packages /etc/apt/preferences.d
 
 # Install LizardFS chunkserver and its service.
 #

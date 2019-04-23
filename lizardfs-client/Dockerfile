@@ -14,6 +14,7 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y iputils-
 # install LizardFS from official repository
 
 COPY lizardfs-dev.list /etc/apt/sources.list.d
+COPY prefer_local_lizardfs_packages /etc/apt/preferences.d
 
 # Install LizardFS client.
 #
