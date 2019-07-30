@@ -96,13 +96,22 @@ To delete all images run:
 
 `-i` stands for `--interactive` and keeps `STDIN` open even if not attached. `-t` stands for `--tty` and allocates a pseudo-TTY.
 
+### Troubleshooting
+
+If you have problems with DNS after setting up default `docker0` network interface, you may want to set custom IP in `/etc/docker/daemon.json`:
+
+    {
+	    "bip": "172.18.0.1/16"
+    }
+
+
 ## TODO
 
 - <s>Remove SSH server ([rationale][14])</s>
 - Remove copy-paste configuration ([solution][21]?)
 - [Make][15] `lizardfs-client` wait for `lizardfs-master` successful start – wait for `lizarfds-master` start ([`depends_on`][17] is [not][18] sufficient)
 - [Add][16] option to make docker-compose build an image from a remote git repository
-- Make explicit [preference][20] of local apt repo for LizardFS (see: [`apt_preferences`][19])
+- <s>Make explicit [preference][20] of local apt repo for LizardFS (see: [`apt_preferences`][19])</s>
 
 ---
 
