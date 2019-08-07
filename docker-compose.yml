@@ -34,7 +34,7 @@ services:
     tty: true
     networks:
       lizardfs-net:
-        ipv4_address: "172.20.0.2"
+        ipv4_address: "172.31.0.2"
     extra_hosts:
       - "mfsmaster:127.0.0.1"
     # Volumes needed for logging
@@ -60,9 +60,9 @@ services:
       - lizardfs-master
     networks:
       lizardfs-net:
-        ipv4_address: "172.20.0.3"
+        ipv4_address: "172.31.0.3"
     extra_hosts:
-      - "mfsmaster:172.20.0.2"
+      - "mfsmaster:172.31.0.2"
     volumes:
       - /dev/log:/dev/log
       - /share:/share
@@ -89,9 +89,9 @@ services:
     #  - apparmor:unconfined
     networks:
       lizardfs-net:
-        ipv4_address: "172.20.0.5"
+        ipv4_address: "172.31.0.5"
     extra_hosts:
-      - "mfsmaster:172.20.0.2"
+      - "mfsmaster:172.31.0.2"
     volumes:
       - /dev/log:/dev/log
       - /share:/share
@@ -118,9 +118,9 @@ services:
     #  - apparmor:unconfined
     networks:
       lizardfs-net:
-        ipv4_address: "172.20.0.11"
+        ipv4_address: "172.31.0.11"
     extra_hosts:
-      - "mfsmaster:172.20.0.2"
+      - "mfsmaster:172.31.0.2"
     volumes:
       - /dev/log:/dev/log
       - /share:/share
@@ -143,9 +143,9 @@ services:
       - lizardfs-master
     networks:
       lizardfs-net:
-        ipv4_address: "172.20.0.12"
+        ipv4_address: "172.31.0.12"
     extra_hosts:
-      - "mfsmaster:172.20.0.2"
+      - "mfsmaster:172.31.0.2"
     volumes:
       - /dev/log:/dev/log
       - /share:/share
@@ -168,9 +168,9 @@ services:
       - lizardfs-master
     networks:
       lizardfs-net:
-        ipv4_address: "172.20.0.13"
+        ipv4_address: "172.31.0.13"
     extra_hosts:
-      - "mfsmaster:172.20.0.2"
+      - "mfsmaster:172.31.0.2"
     volumes:
       - /dev/log:/dev/log
       - /share:/share
@@ -187,4 +187,4 @@ networks:
     driver: bridge
     ipam:
      config:
-       - subnet: 172.20.0.0/16
+       - subnet: 172.31.0.0/16
