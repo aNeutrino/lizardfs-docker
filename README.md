@@ -98,7 +98,7 @@ To delete all images run:
 
 ### Troubleshooting
 
-If you have problems with DNS after setting up default `docker0` network interface, you may want to set custom IP in `/etc/docker/daemon.json`:
+If you have problems with DNS after setting up default `docker0` network interface, you [may want][22] to set custom IP in `/etc/docker/daemon.json`:
 
     {
 	    "bip": "172.18.0.1/16"
@@ -138,3 +138,4 @@ If you have problems with DNS after setting up default `docker0` network interfa
 [19]: https://linux.die.net/man/5/apt_preferences
 [20]: https://askubuntu.com/questions/27362/how-to-only-install-updates-from-a-specific-repository
 [21]: https://stackoverflow.com/questions/39376786/docker-and-symlinks
+[22]: https://development.robinwinslow.uk/2016/06/23/fix-docker-networking-dns/
