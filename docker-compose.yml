@@ -43,15 +43,15 @@ services:
       - /dev/log:/dev/log
       - /share:/share
     # TODO seems to work without it - why?
-    #ports:
-    #  - "9425:9425"
+    ports:
+      - "9425:9425"
 
   ###########################
-  # Shadow
+  # Shadow #1
   ###########################
-  lizardfs-shadow:
-    container_name: "lizardfs-shadow"
-    hostname: lizardfs-shadow
+  lizardfs-shadow-01:
+    container_name: "lizardfs-shadow-01"
+    hostname: lizardfs-shadow-01
     build: ./lizardfs-shadow
     #image: lizardfs/shadow
     stdin_open: true
@@ -61,6 +61,48 @@ services:
     networks:
       lizardfs-net:
         ipv4_address: "172.31.0.3"
+    extra_hosts:
+      - "mfsmaster:172.31.0.2"
+    volumes:
+      - /dev/log:/dev/log
+      - /share:/share
+
+  ###########################
+  # Shadow #2
+  ###########################
+  lizardfs-shadow-02:
+    container_name: "lizardfs-shadow-02"
+    hostname: lizardfs-shadow-02
+    build: ./lizardfs-shadow
+    #image: lizardfs/shadow
+    stdin_open: true
+    tty: true
+    depends_on:
+      - lizardfs-master
+    networks:
+      lizardfs-net:
+        ipv4_address: "172.31.0.4"
+    extra_hosts:
+      - "mfsmaster:172.31.0.2"
+    volumes:
+      - /dev/log:/dev/log
+      - /share:/share
+
+  ###########################
+  # Shadow #3
+  ###########################
+  lizardfs-shadow-03:
+    container_name: "lizardfs-shadow-03"
+    hostname: lizardfs-shadow-03
+    build: ./lizardfs-shadow
+    #image: lizardfs/shadow
+    stdin_open: true
+    tty: true
+    depends_on:
+      - lizardfs-master
+    networks:
+      lizardfs-net:
+        ipv4_address: "172.31.0.5"
     extra_hosts:
       - "mfsmaster:172.31.0.2"
     volumes:
@@ -89,7 +131,7 @@ services:
     #  - apparmor:unconfined
     networks:
       lizardfs-net:
-        ipv4_address: "172.31.0.5"
+        ipv4_address: "172.31.0.10"
     extra_hosts:
       - "mfsmaster:172.31.0.2"
     volumes:
@@ -118,7 +160,7 @@ services:
     #  - apparmor:unconfined
     networks:
       lizardfs-net:
-        ipv4_address: "172.31.0.11"
+        ipv4_address: "172.31.0.21"
     extra_hosts:
       - "mfsmaster:172.31.0.2"
     volumes:
@@ -143,7 +185,7 @@ services:
       - lizardfs-master
     networks:
       lizardfs-net:
-        ipv4_address: "172.31.0.12"
+        ipv4_address: "172.31.0.22"
     extra_hosts:
       - "mfsmaster:172.31.0.2"
     volumes:
@@ -168,7 +210,7 @@ services:
       - lizardfs-master
     networks:
       lizardfs-net:
-        ipv4_address: "172.31.0.13"
+        ipv4_address: "172.31.0.23"
     extra_hosts:
       - "mfsmaster:172.31.0.2"
     volumes:

@@ -11,11 +11,13 @@ After a successful installation you have a fully working LizardFS cluster to pla
 **File docker-compose.yml**
 
 - **`172.31.0.2`**: `lizardfs-master`
-- **`172.31.0.3`**: `shadow`
-- **`172.31.0.11`**: `lizardfs-chunkserver-01`
-- **`172.31.0.12`**: `lizardfs-chunkserver-02`
-- **`172.31.0.13`**: `lizardfs-chunkserver-03`
-- **`172.31.0.5`**: `lizardfs-client`
+- **`172.31.0.3`**: `lizardfs-shadow-01`
+- **`172.31.0.4`**: `lizardfs-shadow-02`
+- **`172.31.0.5`**: `lizardfs-shadow-03`
+- **`172.31.0.10`**: `lizardfs-client`
+- **`172.31.0.21`**: `lizardfs-chunkserver-01`
+- **`172.31.0.22`**: `lizardfs-chunkserver-02`
+- **`172.31.0.23`**: `lizardfs-chunkserver-03`
 - **`http://172.31.0.2:9425`**: management web interface
 
 ## Setup
