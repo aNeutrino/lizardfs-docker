@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# Solve this problem: https://github.com/phusion/baseimage-docker/issues/319
+
+RUN apt-get update && apt-get install -y --no-install-recommends apt-utils
+
 # Install LizardFS client
 
 apt-get update

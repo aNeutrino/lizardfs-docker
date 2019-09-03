@@ -1,40 +1,37 @@
 #!/usr/bin/env bash
 
-# Variables for build from Ubuntu/Debian repo
-#
-#example_chunkserver_config_ext=".gz"
-#example_config_dir="/usr/share/doc/lizardfs-chunkserver/examples"
-#etc_config_dir="/etc/lizardfs"
-#var_lib_dir="/var/lib/lizardfs"
-#lizardfs_user="lizardfs"
+example_config_dir="/usr/share/doc/lizardfs-chunkserver/examples"
+etc_config_dir="/etc/lizardfs"
+var_lib_dir="/var/lib/lizardfs"
 
-# Variables for custom/manual build
+# Solve this problem: https://github.com/phusion/baseimage-docker/issues/319
 
-example_chunkserver_config_ext=".dist"
-example_config_dir="/etc/mfs"
-etc_config_dir="/etc/mfs"
-var_lib_dir="/var/lib/mfs"
-lizardfs_user="mfs"
+RUN apt-get update && apt-get install -y --no-install-recommends apt-utils
 
 # Install LizardFS chunkserver
 
 apt-get update
 apt-get install -y lizardfs-chunkserver
 
-# Copy sample mfschunkserver.cfg.dist configuration file and customize it
+# Copy sample configuration
 
-cp "${example_config_dir}/mfschunkserver.cfg${example_chunkserver_config_ext}" "${etc_config_dir}/mfschunkserver.cfg"
+gzip_extension=".gz"
+mfschunkserver_config_fname="mfschunkserver.cfg"
+mfschunkserver_example_config="${example_config_dir}/${mfschunkserver_config_fname}"
+mfschunkserver_example_config_gzip="${mfschunkserver_example_config}${gzip_extension}"
+mfschunkserver_etc_config="${etc_config_dir}/${mfschunkserver_config_fname}"
+if [ -f "${mfschunkserver_example_config_gzip}" ]; then
+    zcat "${mfschunkserver_example_config_gzip}" > "${mfschunkserver_etc_config}"
+else
+    cp "${mfschunkserver_example_config}" "${mfschunkserver_etc_config}"
+fi
 
-# Needed only if installed from official Ubuntu/Debian repo
-#
-#zcat "${etc_config_dir}/mfschunkserver.cfg" > "${etc_config_dir}/mfschunkserver.cfg.unzipped"
-
-# Appending to gzipped config? Why? TODO FIXME
-#RUN echo "MASTER_HOST=lizardfs-master" >> "${etc_config_dir}/mfschunkserver.cfg"
+RUN echo "MASTER_HOST=lizardfs-master" >> "${mfschunkserver_etc_config}"
 
 # Setup mfshdd.cfg
 
 mkdir -p /mnt/sdb1
+lizardfs_user="lizardfs"
 chown -R "${lizardfs_user}:${lizardfs_user}" /mnt/sdb1
 echo "/mnt/sdb1" >> "${etc_config_dir}/mfshdd.cfg"
 
