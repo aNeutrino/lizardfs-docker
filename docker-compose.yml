@@ -16,8 +16,9 @@
 # 4) 'depends_on' is used to prevent running e.g. 'lizardfs-client' before
 # 'lizardfs-master' starts.
 #
-# 5) Some of the following options are needed to e.g. run strace/ltrace within
-# container: 'privileged', 'cap_add', 'security_opt' (particularly SYS_PTRACE).
+# 5) Some of the following options are needed to e.g. mount NFS share or run
+# strace/ltrace within container: 'privileged', 'cap_add', 'security_opt'
+# (particularly SYS_PTRACE).
 #
 
 version: '3'
@@ -32,6 +33,14 @@ services:
     #image: lizardfs/master
     stdin_open: true
     tty: true
+    # Give extended privileges to this container. Needed to be able to mount
+    # NFS share (useful to upload .deb packages from host machine) or to run
+    # e.g. strace or ltrace.
+    # See: https://github.com/moby/moby/issues/21051#issuecomment-325036902
+    #cap_add:
+    #  - SYS_ADMIN
+    #  - SYS_PTRACE
+    privileged: true
     networks:
       lizardfs-net:
         ipv4_address: "172.31.0.2"
@@ -56,6 +65,7 @@ services:
     #image: lizardfs/shadow
     stdin_open: true
     tty: true
+    privileged: true
     depends_on:
       - lizardfs-master
     networks:
@@ -77,6 +87,7 @@ services:
     #image: lizardfs/shadow
     stdin_open: true
     tty: true
+    privileged: true
     depends_on:
       - lizardfs-master
     networks:
@@ -98,6 +109,7 @@ services:
     #image: lizardfs/shadow
     stdin_open: true
     tty: true
+    privileged: true
     depends_on:
       - lizardfs-master
     networks:
@@ -121,7 +133,6 @@ services:
     tty: true
     depends_on:
       - lizardfs-master
-    # Give extended privileges to this container TODO needed?
     privileged: true
     #cap_add:
     #  - SYS_ADMIN
@@ -150,12 +161,7 @@ services:
     tty: true
     depends_on:
       - lizardfs-master
-    # Uncomment to be privileged to run e.g. strace or ltrace
-    # See: https://github.com/moby/moby/issues/21051#issuecomment-325036902
-    #cap_add:
-    #  - SYS_ADMIN
-    #  - SYS_PTRACE
-    #privileged: true
+    privileged: true
     #security_opt:
     #  - apparmor:unconfined
     networks:
@@ -183,6 +189,7 @@ services:
     tty: true
     depends_on:
       - lizardfs-master
+    privileged: true
     networks:
       lizardfs-net:
         ipv4_address: "172.31.0.22"
@@ -208,6 +215,7 @@ services:
     tty: true
     depends_on:
       - lizardfs-master
+    privileged: true
     networks:
       lizardfs-net:
         ipv4_address: "172.31.0.23"
