@@ -94,9 +94,18 @@ To delete all images run:
 
 ### Get bash into a running container
 
+    docker attach lizardfs-client
+
+or:
+
     docker exec -i -t container-name /bin/bash
 
 `-i` stands for `--interactive` and keeps `STDIN` open even if not attached. `-t` stands for `--tty` and allocates a pseudo-TTY.
+
+To mount on `lizardfs-client`:
+
+    docker attach lizardfs-client
+    mfsmount lizardfs-master:9421:/ /mnt/lizardfs
 
 ### Troubleshooting
 
