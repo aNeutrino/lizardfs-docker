@@ -112,7 +112,7 @@ To mount on `lizardfs-client`:
 If you have problems with DNS after setting up default `docker0` network interface, you [may want][22] to set custom IP in `/etc/docker/daemon.json`:
 
     {
-	    "bip": "172.18.0.1/16"
+	    "bip": "172.31.0.1/16"
     }
 
 
